@@ -22,12 +22,12 @@ class MainActivity : AppCompatActivity() {
         // Toolbar
         setSupportActionBar(binding.mainToolbar)
 
-        // Navigation
+        // Navigation graph hookup
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navHostContainer) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Setup Toolbar con NavController
+        // Connect Toolbar with NavController
         setupActionBarWithNavController(navController)
 
         // BottomNavigationView

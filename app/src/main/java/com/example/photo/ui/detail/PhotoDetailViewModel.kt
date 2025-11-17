@@ -13,34 +13,25 @@ import kotlinx.coroutines.launch
 
 class PhotoDetailViewModel(
     private val repository: PhotoRepository,
-    private val photoId: String
+    private val photoId: String,
+    private val initialPhoto: Photo?
 ) : ViewModel() {
 
-    private val _photoState = MutableLiveData<UiState<Photo>>(UiState.Loading)
+    private val _photoState = MutableLiveData<UiState<Photo>>(
+        initialPhoto?.let { UiState.Success(it) } ?: UiState.Loading
+    )
     val photoState: LiveData<UiState<Photo>> = _photoState
 
     private val _favoriteEvents = MutableLiveData<Event<Boolean?>>()
     val favoriteEvents: LiveData<Event<Boolean?>> = _favoriteEvents
 
     init {
-        loadPhoto()
+        val hasInitialPhoto = initialPhoto != null
+        fetchPhoto(showLoading = !hasInitialPhoto, overrideOnError = !hasInitialPhoto)
     }
 
     fun loadPhoto() {
-        if (photoId.isBlank()) {
-            _photoState.value = UiState.Error("Missing photo id")
-            return
-        }
-        _photoState.value = UiState.Loading
-        viewModelScope.launch {
-            repository.getPhoto(photoId)
-                .onSuccess { photo ->
-                    _photoState.value = UiState.Success(photo)
-                }
-                .onFailure { throwable ->
-                    _photoState.value = UiState.Error(throwable.message.orEmpty())
-                }
-        }
+        fetchPhoto(showLoading = true, overrideOnError = true)
     }
 
     fun toggleFavorite() {
@@ -57,13 +48,40 @@ class PhotoDetailViewModel(
         }
     }
 
+    private fun fetchPhoto(showLoading: Boolean, overrideOnError: Boolean) {
+        if (photoId.isBlank()) {
+            if (overrideOnError || _photoState.value !is UiState.Success) {
+                _photoState.value = UiState.Error("Missing photo id")
+            }
+            return
+        }
+        if (showLoading) {
+            _photoState.value = UiState.Loading
+        }
+        viewModelScope.launch {
+            repository.getPhoto(photoId)
+                .onSuccess { photo ->
+                    _photoState.value = UiState.Success(photo)
+                }
+                .onFailure { throwable ->
+                    if (overrideOnError || _photoState.value !is UiState.Success) {
+                        _photoState.value = UiState.Error(throwable.message.orEmpty())
+                    }
+                }
+        }
+    }
+
     companion object {
-        fun factory(repository: PhotoRepository, photoId: String): ViewModelProvider.Factory =
+        fun factory(
+            repository: PhotoRepository,
+            photoId: String,
+            initialPhoto: Photo?
+        ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     if (modelClass.isAssignableFrom(PhotoDetailViewModel::class.java)) {
                         @Suppress("UNCHECKED_CAST")
-                        return PhotoDetailViewModel(repository, photoId) as T
+                        return PhotoDetailViewModel(repository, photoId, initialPhoto) as T
                     }
                     throw IllegalArgumentException("Unknown ViewModel class $modelClass")
                 }

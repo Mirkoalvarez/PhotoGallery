@@ -1,5 +1,9 @@
 package com.example.photo.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Photo(
     val id: String,
     val title: String,
@@ -11,7 +15,7 @@ data class Photo(
     val width: Int,
     val height: Int,
     val isFavorite: Boolean
-) {
+) : Parcelable {
     val resolutionText: String
         get() = "${width}x$height"
 }

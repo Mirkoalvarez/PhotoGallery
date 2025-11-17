@@ -48,24 +48,24 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Configurar RecyclerView
+        // 1. Configure RecyclerView
         adapter = PhotoAdapter(
             onPhotoClick = { photo -> openDetail(photo) },
             onFavoriteClick = { photo -> viewModel.toggleFavorite(photo) }
         )
         binding.photoList.adapter = adapter
 
-        // 2. Listener para reintentar
+        // 2. Retry listener
         binding.retryButton.setOnClickListener { viewModel.loadPhotos(forceRefresh = true) }
 
-        // 3. Agregar menú superior
+        // 3. Add top app bar menu
         addMenu()
 
-        // 4. --- LO NUEVO: Conectar botones de búsqueda ---
+        // 4. --- New: wire up search widgets ---
         setupSearchListeners()
         // ----------------------------------------------
 
-        // 5. Observadores
+        // 5. Observers
         viewModel.photosState.observe(viewLifecycleOwner, ::renderState)
         viewModel.favoriteEvents.observe(viewLifecycleOwner) { event ->
             event?.getContentIfNotHandled()?.let { result ->
@@ -102,9 +102,9 @@ class HomeFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    // --- LÓGICA DE BÚSQUEDA ---
+    // --- Search logic ---
     private fun setupSearchListeners() {
-        // Listener para el botón "Enter" del teclado
+        // IME action listener for keyboard "Enter"
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.searchEditText.text.toString().trim()
@@ -114,7 +114,7 @@ class HomeFragment : Fragment() {
             false
         }
 
-        // Listeners para los Chips (Categorías)
+        // Chip listeners for preset categories
         binding.chipNature.setOnClickListener { performSearch("Nature") }
         binding.chipCity.setOnClickListener { performSearch("City") }
         binding.chipAnimals.setOnClickListener { performSearch("Animals") }
@@ -123,10 +123,10 @@ class HomeFragment : Fragment() {
 
     private fun performSearch(query: String) {
         if (query.isNotBlank()) {
-            binding.searchEditText.setText(query) // Pone el texto en la barra
-            binding.searchEditText.setSelection(query.length) // Mueve el cursor al final
-            viewModel.searchPhotos(query) // Llama al ViewModel
-            hideKeyboard() // Baja el teclado
+            binding.searchEditText.setText(query) // Mirror the query into the field
+            binding.searchEditText.setSelection(query.length) // Move cursor to the end
+            viewModel.searchPhotos(query) // Forward to the ViewModel
+            hideKeyboard() // Collapse the keyboard
         }
     }
 
@@ -149,7 +149,7 @@ class HomeFragment : Fragment() {
                 state.message.ifBlank { getString(R.string.state_error) }
 
             UiState.Empty -> {
-                // Si estamos buscando algo, mostramos mensaje específico
+                // When searching, show a more specific empty message
                 val query = binding.searchEditText.text.toString()
                 if (query.isNotBlank()) {
                     binding.stateMessage.text = getString(R.string.state_empty_search)
@@ -162,7 +162,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun openDetail(photo: Photo) {
-        val args = bundleOf(ARG_PHOTO_ID to photo.id)
+        val args = bundleOf(
+            ARG_PHOTO_ID to photo.id,
+            ARG_PHOTO to photo
+        )
         findNavController().navigate(R.id.action_homeFragment_to_photoDetailFragment, args)
     }
 
@@ -173,5 +176,6 @@ class HomeFragment : Fragment() {
 
     companion object {
         const val ARG_PHOTO_ID = "photoId"
+        const val ARG_PHOTO = "photo"
     }
 }

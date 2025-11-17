@@ -55,19 +55,19 @@ class DefaultPhotoRepository(
     override suspend fun searchPhotos(query: String): Result<List<Photo>> =
         withContext(dispatcher) {
             runCatching {
-                // 1. Obtenemos favoritos actuales para marcar los corazones correctamente
+                // 1. Grab current favorites to render heart state correctly
                 val favoriteIds = photoDao.getFavoriteIds().toSet()
 
-                // 2. Llamamos a la API (Search)
+                // 2. Call the API search endpoint
                 val response = unsplashApi.searchPhotos(
                     query = query,
                     page = 1,
                     perPage = PAGE_SIZE
                 )
 
-                // 3. Mapeamos a dominio
-                // Nota: Al ser búsqueda, no guardamos en caché DB (para no mezclar con el feed principal),
-                // solo devolvemos los datos vivos y chequeamos si son favoritos.
+                // 3. Map to domain models
+                // Note: search results are not cached to DB (keeps the main feed untouched),
+                // we just return the live data and flag favorites on the fly.
                 response.results.mapIndexed { index, remote ->
                     remote.toDomain(index, favoriteIds.contains(remote.id))
                 }

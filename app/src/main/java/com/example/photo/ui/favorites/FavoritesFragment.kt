@@ -77,7 +77,10 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun openDetail(photo: Photo) {
-        val args = bundleOf(HomeFragment.ARG_PHOTO_ID to photo.id)
+        val args = bundleOf(
+            HomeFragment.ARG_PHOTO_ID to photo.id,
+            HomeFragment.ARG_PHOTO to photo
+        )
         findNavController().navigate(R.id.action_favoritesFragment_to_photoDetailFragment, args)
     }
 

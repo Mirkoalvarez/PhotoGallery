@@ -29,6 +29,10 @@
         <argument
             android:name="photoId"
             app:argType="string" />
+        <argument
+            android:name="photo"
+            app:argType="com.example.photo.domain.model.Photo"
+            app:nullable="true" />
     </fragment>
 
     <fragment

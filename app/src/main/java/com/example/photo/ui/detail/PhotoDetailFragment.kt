@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,8 +23,13 @@ class PhotoDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: PhotoDetailViewModel by viewModels {
-        val photoId = arguments?.getString(HomeFragment.ARG_PHOTO_ID).orEmpty()
-        PhotoDetailViewModel.factory(ServiceLocator.provideRepository(requireContext()), photoId)
+        val repository = ServiceLocator.provideRepository(requireContext())
+        val args = arguments
+        val photoId = args?.getString(HomeFragment.ARG_PHOTO_ID).orEmpty()
+        val initialPhoto = args?.let {
+            BundleCompat.getParcelable(it, HomeFragment.ARG_PHOTO, Photo::class.java)
+        }
+        PhotoDetailViewModel.factory(repository, photoId, initialPhoto)
     }
 
     override fun onCreateView(

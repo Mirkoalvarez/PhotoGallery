@@ -42,9 +42,9 @@ class HomeViewModel(
         }
     }
 
-    // --- AGREGADO: Función de Búsqueda ---
+    // --- Added: Search flow entry point ---
     fun searchPhotos(query: String) {
-        // Si la búsqueda está vacía, simplemente volvemos a cargar las fotos "latest"
+        // For empty queries just reload the default "latest" feed
         if (query.isBlank()) {
             loadPhotos(forceRefresh = false)
             return
@@ -55,7 +55,7 @@ class HomeViewModel(
             repository.searchPhotos(query)
                 .onSuccess { photos ->
                     if (photos.isEmpty()) {
-                        // Importante: Cambiamos a UiState.Empty para mostrar "No se encontraron resultados"
+                        // Important: switch to UiState.Empty to show "No results found"
                         _photosState.value = UiState.Empty
                     } else {
                         _photosState.value = UiState.Success(photos)

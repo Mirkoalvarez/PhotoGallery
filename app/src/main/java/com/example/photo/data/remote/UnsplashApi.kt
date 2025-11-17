@@ -1,6 +1,6 @@
 package com.example.photo.data.remote
 
-// --- CORRECCIÓN 1: Importar las clases que creamos ---
+// --- Note: explicit imports for the new DTOs ---
 import com.example.photo.data.remote.model.RemotePhoto
 import com.example.photo.data.remote.model.SearchResponse
 // --------------------------------------------------
@@ -24,7 +24,7 @@ interface UnsplashApi {
         @Query("order_by") orderBy: String
     ): List<RemotePhoto>
 
-    // --- AGREGADO: Endpoint de Búsqueda ---
+    // --- Added: search endpoint ---
     @GET("search/photos")
     suspend fun searchPhotos(
         @Query("query") query: String,
@@ -32,7 +32,7 @@ interface UnsplashApi {
         @Query("per_page") perPage: Int
     ): SearchResponse
 
-    // --- CORRECCIÓN 2: Eliminamos la función duplicada que estaba acá ---
+    // --- Cleanup: removed the duplicate function that used to live here ---
 
     companion object {
         private const val BASE_URL = "https://api.unsplash.com/"
