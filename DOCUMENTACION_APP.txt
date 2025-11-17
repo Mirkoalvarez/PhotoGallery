@@ -1,0 +1,74 @@
+DOCUMENTACIÓN DE LA APP PHOTO
+================================
+
+1. Flujo de trabajo entre archivos
+----------------------------------
+- El punto de entrada `MainActivity.kt` infla el layout principal, configura el `Toolbar`, crea el `NavController` a partir del `NavHostFragment` y conecta la barra inferior. 
+  Cada destino del grafo navega hacia fragmentos ubicados en `ui/`.
+- Los fragmentos (`HomeFragment`, `FavoritesFragment`, `PhotoDetailFragment`, `SettingsFragment`) interactúan con sus respectivos `ViewModel`s para solicitar o actualizar datos.
+  El patrón es: Fragmento observa un `LiveData<UiState<…>>`, reacciona a cambios y delega acciones (búsqueda, favoritos, limpieza de cache) al `ViewModel`.
+- Los `ViewModel`s usan el `ServiceLocator` para obtener una instancia de `PhotoRepository`. Este repositorio orquesta la lectura de la base de datos local (`data/local`), 
+  el consumo remoto (`data/remote`) y la sincronización de estados de favoritos, devolviendo modelos de dominio (`domain/model`).
+- `PhotoRepository` implementa las operaciones expuestas a los `ViewModel`s: carga inicial, búsqueda, favoritos, detalle, estado de cache y limpieza. 
+  Internamente compone respuestas a partir del `UnsplashApi`, persiste usando Room y transforma entidades a `Photo`.
+- `UiState` y `Event` sirven como capa de comunicación entre `ViewModel`s y UI: `UiState` describe Loading/Success/Empty/Error y `Event` evita que acciones (ej. Snackbar)
+   se repitan tras rotaciones.
+
+2. Carpetas en `app/src/main/java/com/example/photo`
+---------------------------------------------------
+
+2.1. `core/`
+  - `CacheTracker.kt`: administra `SharedPreferences` para conocer cuándo se actualizó la caché; expone métodos `markUpdated`, `clear` y `lastUpdateTimestamp`.
+  - `Event.kt`: wrapper genérico con `getContentIfNotHandled`/`peekContent` para eventos de una sola emisión.
+  - `ServiceLocator.kt`: crea y memoriza `PhotoRepository` y `PhotoDatabase`. Usa `Room.databaseBuilder`, `UnsplashApi.create` y `CacheTracker`.
+  - `UiState.kt`: sealed class (Loading, Success, Empty, Error) utilizada por todos los `ViewModel`s.
+
+2.2. `data/`
+  - `local/`
+    * `PhotoDatabase.kt`: definición de Room con entidades `PhotoEntity` y `FavoritePhotoEntity`; expone `photoDao()`.
+    * `PhotoDao.kt`: consultas Room (listar fotos, favoritos, estados de cache, insertar/eliminar, etc.). Sus métodos se invocan desde `DefaultPhotoRepository`.
+    * `PhotoEntity.kt` y `FavoritePhotoEntity.kt`: entidades persistidas para feed y favoritos respectivamente.
+  - `remote/`
+    * `UnsplashApi.kt`: interfaz Retrofit con `getLatestPhotos` y `searchPhotos`, además de un `companion object` que crea Retrofit+Moshi y agrega cabeceras de autenticación.
+    * `model/RemotePhoto.kt`: data classes `RemotePhoto`, `RemotePhotoUrls` y `RemoteUser` que representan la respuesta del API.
+    * `model/SearchResponse.kt`: data class con `results`, `total` y `totalPages`.
+  - `repository/`
+    * `PhotoRepository.kt`: interfaz con todas las operaciones disponibles para la capa de UI.
+    * `DefaultPhotoRepository.kt`: implementación que combina Retrofit y Room. Métodos clave:
+        - `getLatestPhotos`: carga cacheada, refresca desde red y persiste.
+        - `searchPhotos`: consulta remota sin cachear, respetando favoritos.
+        - `getPhoto`: obtiene detalle desde DB o favoritos.
+        - `getFavoritePhotos`, `toggleFavorite`, `isFavorite`, `getCacheStatus`, `clearCache`.
+    * `PhotoMappers.kt`: funciones `toDomain`, `toEntity`, `toFavoriteEntity` para traducir entre capas.
+
+2.3. `domain/`
+  - `model/Photo.kt`: modelo parcelable usado en toda la app; contiene propiedades (urls, tamaños, likes, favorito) y `resolutionText`.
+  - `model/CacheStatus.kt`: resumen del estado de caché y propiedad calculada `hasCache`.
+
+2.4. `ui/`
+  - `home/`
+    * `HomeFragment.kt`: muestra el feed principal, maneja búsqueda (IME y chips), observa `photosState`/`favoriteEvents` y navega al detalle enviando el `Photo` seleccionado.
+    * `HomeViewModel.kt`: expone `loadPhotos`, `searchPhotos` y `toggleFavorite`. Todas usan corrutinas para hablar con el repositorio y actualizan `UiState`.
+    * `PhotoAdapter.kt`: `ListAdapter` para el RecyclerView, vincula datos con `ItemPhotoBinding`, maneja clicks y toggle de favoritos.
+  - `detail/`
+    * `PhotoDetailFragment.kt`: observa `photoState`, carga la imagen con Coil, muestra metadatos y delega favoritos/recargas al `ViewModel`.
+    * `PhotoDetailViewModel.kt`: recibe el `photoId` y, opcionalmente, el `Photo` parcelable inicial. Métodos `loadPhoto`, `toggleFavorite` y lógica privada `fetchPhoto` que sincroniza el detalle con cache/repositorio.
+  - `favorites/`
+    * `FavoritesFragment.kt`: configura un `PhotoAdapter`, muestra estados vacíos/errores y navega al detalle.
+    * `FavoritesViewModel.kt`: obtiene favoritos en `loadFavorites`, maneja `toggleFavorite`, elimina o refresca ítems locales y emite eventos de Snackbar.
+  - `settings/`
+    * `SettingsFragment.kt`: UI para ver cantidad de fotos cacheadas, última sincronización y limpiar cache. Usa `Snackbar` para feedback.
+    * `SettingsViewModel.kt`: consulta `getCacheStatus`, expone `clearCache` y reutiliza `refreshStatus` tras limpiar.
+
+2.5. Raíz del paquete
+  - `MainActivity.kt`: activity principal que infla el binding, configura `Toolbar`, `NavController` y `BottomNavigationView`, delegando navegación hacia los fragmentos descritos.
+
+3. Relación lógica resumida
+---------------------------
+1. `MainActivity` muestra el contenedor y cede control al grafo de navegación.
+2. Fragmentos en `ui/` piden sus `ViewModel`s con `viewModels { … }`, los cuales obtienen `PhotoRepository` desde `ServiceLocator`.
+3. `PhotoRepository` usa `UnsplashApi` para red y `PhotoDao` + `PhotoDatabase` para persistencia; convierte todo a `Photo` (dominio).
+4. Al completar cada operación, los `ViewModel`s publican `UiState` en `LiveData`. Los fragmentos actualizan vistas o muestran `Snackbar`s; eventos puntuales se envían con `Event`.
+5. `CacheTracker` y `CacheStatus` proveen información a la pantalla de ajustes sobre la validez de la caché.
+
+Con esta estructura, todas las piezas dentro de `app/src/main/java/com/example/photo` quedan documentadas sin entrar a la carpeta `res`.
