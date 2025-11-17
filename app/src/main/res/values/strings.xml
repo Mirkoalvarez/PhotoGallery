@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Photo Explorer</string>
     <string name="title_home">Photos</string>
+    <string name="title_wallpapers">Vertical Wallpapers</string>
+    <string name="title_mobiles">Mobiles</string>
+    <string name="title_popular">Popular</string>
+    <string name="title_discover">Discover</string>
     <string name="title_detail">Photo Detail</string>
     <string name="title_settings">Settings</string>
     <string name="title_favorites">Favorites</string>
@@ -8,6 +12,12 @@
     <string name="state_error">We could not load the photos. Please try again.</string>
     <string name="favorites_empty">You have not liked any photos yet.</string>
     <string name="favorites_loading">Loading your liked photos...</string>
+    <string name="wallpapers_state_empty">No wallpapers found that match your device.</string>
+    <string name="wallpapers_loading">Loading wallpapers...</string>
+    <string name="popular_loading">Loading popular photos...</string>
+    <string name="popular_state_empty">No popular photos found.</string>
+    <string name="discover_loading">Loading random photos...</string>
+    <string name="discover_state_empty">No random photos found.</string>
     <string name="action_retry">Retry</string>
     <string name="content_photo">Photo preview</string>
     <string name="settings_cache_title">Local cache</string>

@@ -24,15 +24,25 @@ interface UnsplashApi {
         @Query("order_by") orderBy: String
     ): List<RemotePhoto>
 
-    // --- Added: search endpoint ---
     @GET("search/photos")
     suspend fun searchPhotos(
         @Query("query") query: String,
         @Query("page") page: Int,
-        @Query("per_page") perPage: Int
+        @Query("per_page") perPage: Int,
+        @Query("orientation") orientation: String? = null
     ): SearchResponse
 
-    // --- Cleanup: removed the duplicate function that used to live here ---
+    @GET("photos")
+    suspend fun getPopularPhotos(
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int,
+        @Query("order_by") orderBy: String = "popular"
+    ): List<RemotePhoto>
+
+    @GET("photos/random")
+    suspend fun getRandomPhotos(
+        @Query("count") count: Int
+    ): List<RemotePhoto>
 
     companion object {
         private const val BASE_URL = "https://api.unsplash.com/"

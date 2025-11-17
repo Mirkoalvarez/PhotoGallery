@@ -115,10 +115,10 @@ class HomeFragment : Fragment() {
         }
 
         // Chip listeners for preset categories
-        binding.chipNature.setOnClickListener { performSearch("Nature") }
-        binding.chipCity.setOnClickListener { performSearch("City") }
-        binding.chipAnimals.setOnClickListener { performSearch("Animals") }
-        binding.chipTechnology.setOnClickListener { performSearch("Technology") }
+        binding.chipNature.setOnClickListener { performSearch(getString(R.string.category_nature)) }
+        binding.chipCity.setOnClickListener { performSearch(getString(R.string.category_city)) }
+        binding.chipAnimals.setOnClickListener { performSearch(getString(R.string.category_animals)) }
+        binding.chipTechnology.setOnClickListener { performSearch(getString(R.string.category_technology)) }
     }
 
     private fun performSearch(query: String) {

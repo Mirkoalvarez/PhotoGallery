@@ -13,4 +13,7 @@ interface PhotoRepository {
     suspend fun clearCache(): Result<Unit>
 
     suspend fun searchPhotos(query: String): Result<List<Photo>>
+    suspend fun getWallpaperPhotos(): Result<List<Photo>>
+    suspend fun getPopularPhotos(): Result<List<Photo>>
+    suspend fun getRandomPhotos(): Result<List<Photo>>
 }

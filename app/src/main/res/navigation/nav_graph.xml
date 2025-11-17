@@ -22,6 +22,36 @@
     </fragment>
 
     <fragment
+        android:id="@+id/wallpaperFragment"
+        android:name="com.example.photo.ui.wallpaper.WallpaperFragment"
+        android:label="@string/title_wallpapers"
+        tools:layout="@layout/fragment_wallpaper">
+        <action
+            android:id="@+id/action_wallpaperFragment_to_photoDetailFragment"
+            app:destination="@id/photoDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/popularFragment"
+        android:name="com.example.photo.ui.popular.PopularFragment"
+        android:label="@string/title_popular"
+        tools:layout="@layout/fragment_popular">
+        <action
+            android:id="@+id/action_popularFragment_to_photoDetailFragment"
+            app:destination="@id/photoDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/discoverFragment"
+        android:name="com.example.photo.ui.discover.DiscoverFragment"
+        android:label="@string/title_discover"
+        tools:layout="@layout/fragment_discover">
+        <action
+            android:id="@+id/action_discoverFragment_to_photoDetailFragment"
+            app:destination="@id/photoDetailFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/photoDetailFragment"
         android:name="com.example.photo.ui.detail.PhotoDetailFragment"
         android:label="@string/title_detail"

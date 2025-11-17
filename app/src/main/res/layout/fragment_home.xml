@@ -48,25 +48,25 @@
                 android:id="@+id/chipNature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nature" />
+                android:text="@string/category_nature" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="City" />
+                android:text="@string/category_city" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipAnimals"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Animals" />
+                android:text="@string/category_animals" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipTechnology"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Technology" />
+                android:text="@string/category_technology" />
 
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>

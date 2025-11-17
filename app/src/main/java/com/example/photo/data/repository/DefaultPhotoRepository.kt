@@ -62,7 +62,8 @@ class DefaultPhotoRepository(
                 val response = unsplashApi.searchPhotos(
                     query = query,
                     page = 1,
-                    perPage = PAGE_SIZE
+                    perPage = PAGE_SIZE,
+                    orientation = null
                 )
 
                 // 3. Map to domain models
@@ -71,6 +72,50 @@ class DefaultPhotoRepository(
                 response.results.mapIndexed { index, remote ->
                     remote.toDomain(index, favoriteIds.contains(remote.id))
                 }
+            }
+        }
+
+    override suspend fun getWallpaperPhotos(): Result<List<Photo>> =
+        withContext(dispatcher) {
+            runCatching {
+                val favoriteIds = photoDao.getFavoriteIds().toSet()
+                val response = unsplashApi.searchPhotos(
+                    query = "wallpaper",
+                    page = 1,
+                    perPage = PAGE_SIZE,
+                    orientation = "portrait"
+                )
+
+                response.results
+                    .mapIndexed { index, remote ->
+                        remote.toDomain(index, favoriteIds.contains(remote.id))
+                    }
+                    .filter { photo ->
+                        if (photo.width == 0) return@filter false
+                        photo.height > photo.width
+                    }
+            }
+        }
+
+    override suspend fun getPopularPhotos(): Result<List<Photo>> =
+        withContext(dispatcher) {
+            runCatching {
+                val favoriteIds = photoDao.getFavoriteIds().toSet()
+                unsplashApi.getPopularPhotos(page = 1, perPage = PAGE_SIZE)
+                    .mapIndexed { index, remote ->
+                        remote.toDomain(index, favoriteIds.contains(remote.id))
+                    }
+            }
+        }
+
+    override suspend fun getRandomPhotos(): Result<List<Photo>> =
+        withContext(dispatcher) {
+            runCatching {
+                val favoriteIds = photoDao.getFavoriteIds().toSet()
+                unsplashApi.getRandomPhotos(count = PAGE_SIZE)
+                    .mapIndexed { index, remote ->
+                        remote.toDomain(index, favoriteIds.contains(remote.id))
+                    }
             }
         }
 
