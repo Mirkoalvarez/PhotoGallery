@@ -70,5 +70,3 @@ DOCUMENTACIÓN DE LA APP PHOTO
 3. `PhotoRepository` usa `UnsplashApi` para red y `PhotoDao` + `PhotoDatabase` para persistencia; convierte todo a `Photo` (dominio).
 4. Al completar cada operación, los `ViewModel`s publican `UiState` en `LiveData`. Los fragmentos actualizan vistas o muestran `Snackbar`s; eventos puntuales se envían con `Event`.
 5. `CacheTracker` y `CacheStatus` proveen información a la pantalla de ajustes sobre la validez de la caché.
-
-Con esta estructura, todas las piezas dentro de `app/src/main/java/com/example/photo` quedan documentadas sin entrar a la carpeta `res`.
