@@ -4,9 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background_favorites"
     android:padding="16dp"
     tools:context=".ui.favorites.FavoritesFragment">
 
+    <!-- Título principal de la sección -->
+    <TextView
+        android:id="@+id/favoritesTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/favorites_title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="#8E8100"
+        android:textStyle="bold"
+        android:paddingBottom="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Lista de fotos favoritas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favoritesList"
         android:layout_width="0dp"
@@ -14,35 +30,37 @@
         android:clipToPadding="false"
         android:paddingBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/favoritesTitle"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_photo" />
 
+    <!-- Indicador de carga -->
     <ProgressBar
         android:id="@+id/favoritesLoading"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Estado vacío o mensaje de error -->
     <LinearLayout
         android:id="@+id/favoritesStateContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="12dp"
         android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/favoritesStateMessage"
@@ -50,7 +68,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="?android:textColorPrimary"
+            android:textColor="@color/gray_dark"
             tools:text="@string/favorites_state_empty" />
 
         <com.google.android.material.button.MaterialButton
@@ -58,7 +76,8 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_home" />
+            android:text="@string/title_home"
+            android:textColor="@color/bnv_item_checked" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

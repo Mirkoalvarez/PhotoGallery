@@ -42,6 +42,32 @@ class HomeViewModel(
         }
     }
 
+    // --- AGREGADO: Función de Búsqueda ---
+    fun searchPhotos(query: String) {
+        // Si la búsqueda está vacía, simplemente volvemos a cargar las fotos "latest"
+        if (query.isBlank()) {
+            loadPhotos(forceRefresh = false)
+            return
+        }
+
+        _photosState.value = UiState.Loading
+        viewModelScope.launch {
+            repository.searchPhotos(query)
+                .onSuccess { photos ->
+                    if (photos.isEmpty()) {
+                        // Importante: Cambiamos a UiState.Empty para mostrar "No se encontraron resultados"
+                        _photosState.value = UiState.Empty
+                    } else {
+                        _photosState.value = UiState.Success(photos)
+                    }
+                }
+                .onFailure { throwable ->
+                    _photosState.value = UiState.Error(throwable.message.orEmpty())
+                }
+        }
+    }
+    // -------------------------------------
+
     fun toggleFavorite(photo: Photo) {
         viewModelScope.launch {
             repository.toggleFavorite(photo)

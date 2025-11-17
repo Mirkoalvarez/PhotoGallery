@@ -1,5 +1,6 @@
 package com.example.photo.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -7,6 +8,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -44,15 +47,25 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 1. Configurar RecyclerView
         adapter = PhotoAdapter(
             onPhotoClick = { photo -> openDetail(photo) },
             onFavoriteClick = { photo -> viewModel.toggleFavorite(photo) }
         )
         binding.photoList.adapter = adapter
+
+        // 2. Listener para reintentar
         binding.retryButton.setOnClickListener { viewModel.loadPhotos(forceRefresh = true) }
 
+        // 3. Agregar menú superior
         addMenu()
 
+        // 4. --- LO NUEVO: Conectar botones de búsqueda ---
+        setupSearchListeners()
+        // ----------------------------------------------
+
+        // 5. Observadores
         viewModel.photosState.observe(viewLifecycleOwner, ::renderState)
         viewModel.favoriteEvents.observe(viewLifecycleOwner) { event ->
             event?.getContentIfNotHandled()?.let { result ->
@@ -83,12 +96,45 @@ class HomeFragment : Fragment() {
                         findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
                         true
                     }
-
                     else -> false
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
+
+    // --- LÓGICA DE BÚSQUEDA ---
+    private fun setupSearchListeners() {
+        // Listener para el botón "Enter" del teclado
+        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = binding.searchEditText.text.toString().trim()
+                performSearch(query)
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
+        // Listeners para los Chips (Categorías)
+        binding.chipNature.setOnClickListener { performSearch("Nature") }
+        binding.chipCity.setOnClickListener { performSearch("City") }
+        binding.chipAnimals.setOnClickListener { performSearch("Animals") }
+        binding.chipTechnology.setOnClickListener { performSearch("Technology") }
+    }
+
+    private fun performSearch(query: String) {
+        if (query.isNotBlank()) {
+            binding.searchEditText.setText(query) // Pone el texto en la barra
+            binding.searchEditText.setSelection(query.length) // Mueve el cursor al final
+            viewModel.searchPhotos(query) // Llama al ViewModel
+            hideKeyboard() // Baja el teclado
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+    // --------------------------
 
     private fun renderState(state: UiState<List<Photo>>) {
         val showList = state is UiState.Success || (state is UiState.Loading && adapter.itemCount > 0)
@@ -102,7 +148,15 @@ class HomeFragment : Fragment() {
             is UiState.Error -> binding.stateMessage.text =
                 state.message.ifBlank { getString(R.string.state_error) }
 
-            UiState.Empty -> binding.stateMessage.text = getString(R.string.state_empty)
+            UiState.Empty -> {
+                // Si estamos buscando algo, mostramos mensaje específico
+                val query = binding.searchEditText.text.toString()
+                if (query.isNotBlank()) {
+                    binding.stateMessage.text = getString(R.string.state_empty_search)
+                } else {
+                    binding.stateMessage.text = getString(R.string.state_empty)
+                }
+            }
             UiState.Loading -> binding.stateMessage.text = getString(R.string.home_loading_message)
         }
     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -37,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textColor="@color/gray_dark"
                 tools:text="Author Name" />
 
             <TextView
@@ -45,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="@color/gray_medium"
                 tools:text="Description about the selected photo" />
 
             <TextView
@@ -53,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:textColor="@color/gray_light"
                 tools:text="Likes: 120" />
 
             <TextView
@@ -61,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:textColor="@color/gray_light"
                 tools:text="Dimensions: 4032x3024" />
 
             <com.google.android.material.button.MaterialButton
@@ -69,6 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_like" />
+
         </LinearLayout>
     </ScrollView>
 
@@ -89,6 +95,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/gray_dark"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

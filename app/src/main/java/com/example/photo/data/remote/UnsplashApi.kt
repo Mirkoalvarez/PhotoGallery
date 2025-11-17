@@ -1,6 +1,10 @@
 package com.example.photo.data.remote
 
+// --- CORRECCIÓN 1: Importar las clases que creamos ---
 import com.example.photo.data.remote.model.RemotePhoto
+import com.example.photo.data.remote.model.SearchResponse
+// --------------------------------------------------
+
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor
@@ -19,6 +23,16 @@ interface UnsplashApi {
         @Query("per_page") perPage: Int,
         @Query("order_by") orderBy: String
     ): List<RemotePhoto>
+
+    // --- AGREGADO: Endpoint de Búsqueda ---
+    @GET("search/photos")
+    suspend fun searchPhotos(
+        @Query("query") query: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
+    ): SearchResponse
+
+    // --- CORRECCIÓN 2: Eliminamos la función duplicada que estaba acá ---
 
     companion object {
         private const val BASE_URL = "https://api.unsplash.com/"

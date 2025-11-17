@@ -6,15 +6,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
+    android:background="@color/app_background"
     tools:context=".ui.settings.SettingsFragment">
 
+    <!-- Tarjeta de Cache -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cacheCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp">
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +31,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_cache_title"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:textStyle="bold" />
+                android:textColor="@color/gray_dark"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/cacheStatusValue"
@@ -36,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                tools:text="Cached photos: 0" />
+                android:textColor="@color/gray_medium"
+                tools:text="Cached photos: 0"/>
 
             <TextView
                 android:id="@+id/cacheLastUpdate"
@@ -44,22 +49,29 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                tools:text="Last sync: --" />
+                android:textColor="@color/gray_light"
+                tools:text="Last sync: --"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Mensaje informativo -->
     <TextView
         android:id="@+id/cacheMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        tools:text="@string/settings_cache_message" />
+        android:textColor="@color/gray_dark"
+        tools:text="@string/settings_cache_message"/>
 
+    <!-- Botón de limpiar cache -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clearCacheButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/action_clear_cache" />
+        android:text="@string/action_clear_cache"
+        app:cornerRadius="12dp"
+        app:backgroundTint="@color/bnv_item_checked"
+        android:textColor="@color/white"/>
 
 </LinearLayout>

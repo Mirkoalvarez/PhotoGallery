@@ -7,17 +7,83 @@
     android:padding="16dp"
     tools:context=".ui.home.HomeFragment">
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchBarLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/search_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:startIconDrawable="@drawable/ic_search_24dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/categoryScrollView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchBarLayout">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/categoryChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipNature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nature" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="City" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAnimals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Animals" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTechnology"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Technology" />
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/photoList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
+        android:paddingTop="16dp"
         android:paddingBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/categoryScrollView"
         tools:listitem="@layout/item_photo" />
 
     <ProgressBar
@@ -49,7 +115,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="?android:textColorPrimary"
+            android:textColor="@color/gray_dark"
             tools:text="@string/state_empty" />
 
         <com.google.android.material.button.MaterialButton

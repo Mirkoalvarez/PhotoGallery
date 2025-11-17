@@ -11,4 +11,6 @@ interface PhotoRepository {
     suspend fun isFavorite(photoId: String): Result<Boolean>
     suspend fun getCacheStatus(): Result<CacheStatus>
     suspend fun clearCache(): Result<Unit>
+
+    suspend fun searchPhotos(query: String): Result<List<Photo>>
 }

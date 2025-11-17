@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <color name="black">#FF000000</color> <!-- texto oscuro -->
     <color name="white">#FFFFFFFF</color>
+
+    <color name="bnv_background">#EFEFEF</color>
+    <color name="bnv_item_checked">#6200EE</color>
+    <color name="bnv_item_unchecked">#9E9E9E</color>
+
+    <color name="toolbar_icon_color">#4A4A4A</color>
+    <color name="app_background">#F8F9FA</color>
+
+    <color name="gray_dark">#212121</color>      <!-- títulos importantes -->
+    <color name="gray_medium">#424242</color>    <!-- subtítulos y descripciones -->
+    <color name="gray_light">#616161</color>
+
+    <color name="text_light">#FFFFFF</color>
+    <color name="text_light_secondary">#E0E0E0</color>
+    <color name="text_light_caption">#B0B0B0</color>
+
+    <color name="red_favorite">#FF1744</color> <!-- rojo favorito -->
+    <color name="app_bar_background">#EFEFEF</color>
+
+
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+
+    <color name="app_background_favorites">#E9E8E8</color>
+
 </resources>
